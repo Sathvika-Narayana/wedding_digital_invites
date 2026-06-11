@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+@layer base {
+  :root {
+    --background: #fdfbf7;
+    --foreground: #4a0404;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #1a0008; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #d97706, #d6336c);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: #ffd700; }
+
+/* ── Glassmorphism ── */
+.glass {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ── Gold shimmer on text ── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.gold-shimmer {
+  background: linear-gradient(90deg, #b8860b, #ffd700, #fffacd, #ffd700, #b8860b);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Fade-in utility ── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation: fade-in 1s ease forwards;
+}
+
+/* ── Satin curtain gentle sway ── */
+@keyframes curtain-sway {
+  0%, 100% { transform: skewY(0deg) scaleX(1); }
+  25%       { transform: skewY(0.3deg) scaleX(1.005); }
+  75%       { transform: skewY(-0.3deg) scaleX(0.995); }
+}
+.curtain-sway {
+  animation: curtain-sway 6s ease-in-out infinite;
+}
+
+/* ── Jasmine float ── */
+@keyframes jasmine-float {
+  0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+  10%  { opacity: 0.7; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+/* ── Sparkle twinkle ── */
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50%       { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+/* ── Firefly drift ── */
+@keyframes firefly-drift {
+  0%   { transform: translate(0, 0);      opacity: 0.2; }
+  30%  { opacity: 0.9; }
+  70%  { opacity: 0.7; }
+  100% { transform: translate(60px, -40px); opacity: 0.1; }
+}
+
+/* ── Wax seal pulse ── */
+@keyframes seal-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139,0,30,0.5), 0 0 60px rgba(139,0,30,0.2); }
+  50%       { box-shadow: 0 0 40px rgba(139,0,30,0.8), 0 0 80px rgba(139,0,30,0.35); }
+}
+
+/* ── Parallax helper ── */
+.parallax-slow  { transform: translateZ(-1px) scale(1.5); }
+.parallax-fast  { transform: translateZ(-2px) scale(2.0); }
+
+/* ── Touch-friendly tap areas ── */
+button, a, [role="button"] {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Smooth section transitions ── */
+section {
+  transition: opacity 0.3s ease;
+}
+
+/* ── Mobile-first font scale ── */
+@media (max-width: 640px) {
+  html { font-size: 15px; }
+}
+
+/* ── Prevent overscroll flash ── */
+html, body {
+  overscroll-behavior-y: none;
+}
