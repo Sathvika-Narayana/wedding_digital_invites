@@ -21,6 +21,8 @@ const config: Config = {
       fontFamily: {
         calligraphy: ['var(--font-great-vibes)', 'cursive'],
         serif: ['var(--font-playfair)', 'serif'],
+        ebgaramond: ['var(--font-eb-garamond)', 'serif'],
+        cormorant: ['var(--font-cormorant)', 'serif'],
         sans: ['var(--font-lato)', 'sans-serif'],
       },
       backgroundImage: {

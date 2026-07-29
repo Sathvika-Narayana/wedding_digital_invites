@@ -6,8 +6,13 @@
 
 @layer base {
   :root {
-    --background: #fdfbf7;
-    --foreground: #4a0404;
+    --background: #0d0508;
+    --foreground: #f5edd8;
+    --maroon: #7a0e22;
+    --gold: #c8a84b;
+    --gold-light: #e8d49a;
+    --cream: #f5edd8;
+    --dark: #1a0a0a;
   }
 
   html {
@@ -22,9 +27,15 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--cream);
+  background: #0d0508;
+  font-family: var(--font-eb-garamond), serif;
   overflow-x: hidden;
+}
+
+.strip {
+  height: 6px;
+  background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
 }
 
 /* ── Custom Scrollbar ── */
@@ -109,7 +120,7 @@ body {
 .parallax-fast  { transform: translateZ(-2px) scale(2.0); }
 
 /* ── Touch-friendly tap areas ── */
-button, a, [role="button"] {
+button, [role="button"] {
   min-height: 44px;
   display: inline-flex;
   align-items: center;

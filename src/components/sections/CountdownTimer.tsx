@@ -88,9 +88,9 @@ export function CountdownTimer() {
                 {/* Value */}
                 <motion.span
                   key={value}
-                  initial={{ rotateX: 90, opacity: 0 }}
-                  animate={{ rotateX: 0, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0.3 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
                   className="block font-serif text-5xl md:text-6xl font-bold leading-none mb-2"
                   style={{
                     background: "linear-gradient(135deg, #fbbf24, #fffacd, #fbbf24)",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 import fs from "fs";
 import path from "path";
 
@@ -66,8 +67,17 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+const ADMIN_SECRET = process.env.ADMIN_SECRET || "sudeepthiNayan2026";
+
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const secret = searchParams.get("secret") || req.headers.get("x-admin-secret");
+
+    if (secret !== ADMIN_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // 1. If Google Script URL is configured, retrieve data from it
     if (GOOGLE_SCRIPT_URL) {
       const response = await fetch(GOOGLE_SCRIPT_URL, { cache: "no-store" });
@@ -102,5 +112,57 @@ export async function GET() {
   } catch (error) {
     console.error("Failed to fetch RSVPs:", error);
     return NextResponse.json({ error: "Failed to read RSVPs" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const rsvpId = searchParams.get("rsvpId");
+    const secret = searchParams.get("secret") || req.headers.get("x-admin-secret");
+
+    if (secret !== ADMIN_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!rsvpId) {
+      return NextResponse.json({ error: "rsvpId is required" }, { status: 400 });
+    }
+
+    // 1. If Vercel KV is configured
+    if (KV_REST_API_URL && KV_REST_API_TOKEN) {
+      const response = await fetch(`${KV_REST_API_URL}/lrange/rsvps/0/-1`, {
+        headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` },
+        cache: "no-store",
+      });
+      if (response.ok) {
+        const rawData = await response.json();
+        const rsvps = (rawData.result || []).map((item: string) => JSON.parse(item));
+        const updated = rsvps.filter((item: any) => item.id !== rsvpId);
+        
+        await fetch(`${KV_REST_API_URL}/del/rsvps`, {
+          headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` },
+        });
+        for (const item of updated) {
+          await fetch(`${KV_REST_API_URL}/rpush/rsvps/${encodeURIComponent(JSON.stringify(item))}`, {
+            headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` },
+          });
+        }
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    // 2. Local Fallback (write to file)
+    if (fs.existsSync(filePath)) {
+      const fileContent = fs.readFileSync(filePath, "utf-8");
+      const rsvps = JSON.parse(fileContent || "[]");
+      const updated = rsvps.filter((item: any) => item.id !== rsvpId);
+      fs.writeFileSync(filePath, JSON.stringify(updated, null, 2), "utf-8");
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Failed to delete RSVP:", error);
+    return NextResponse.json({ error: "Failed to delete RSVP" }, { status: 500 });
   }
 }

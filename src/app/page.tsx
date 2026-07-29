@@ -9,6 +9,9 @@ import { CoupleSection } from "@/components/sections/CoupleSection";
 import { CountdownTimer } from "@/components/sections/CountdownTimer";
 import { EventCards } from "@/components/sections/EventCards";
 import { VenueSection } from "@/components/sections/VenueSection";
+
+
+import { WeddingGallery } from "@/components/sections/WeddingGallery";
 import { RSVPForm } from "@/components/sections/RSVPForm";
 import { FloatingJasmine } from "@/components/effects/FloatingJasmine";
 import { GoldenSparkles } from "@/components/effects/GoldenSparkles";
@@ -49,67 +52,59 @@ export default function Home() {
           >
             {/* 1. Hero – couple photo + names */}
             <WelcomeScreen />
+            
+            <div className="strip" />
 
-            {/* 2. Wax seal – "Save the Date" reveal */}
+            {/* 2. Celebration description */}
             <WaxSealSection />
+
+            <div className="strip" />
 
             {/* 3. Bride & groom profiles */}
             <CoupleSection />
 
+            <div className="strip" />
+
             {/* 4. Countdown to wedding day */}
             <CountdownTimer />
 
-            {/* 5. Full-screen event cards */}
+            <div className="strip" />
+
+            {/* 5. Event cards (Festivities) */}
             <EventCards />
+
+            <div className="strip" />
 
             {/* 6. Venue & navigation */}
             <VenueSection />
 
-            {/* 7. RSVP & blessings */}
+            <div className="strip" />
+
+
+
+            {/* 9. Media upload & filters - Wedding Gallery */}
+            <WeddingGallery />
+
+            <div className="strip" />
+
+            {/* 10. RSVP & blessings */}
             <RSVPForm />
 
+            <div className="strip" />
+
             {/* Footer */}
-            <footer
-              className="relative overflow-hidden py-14 px-4 text-center"
-              style={{ background: "linear-gradient(160deg, #1a0008 0%, #2d000e 50%, #1a0008 100%)" }}
-            >
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold-primary/40 to-transparent" />
-
-              {/* Ornamental corner glyphs */}
-              <div className="absolute top-4 left-6 text-gold-primary/10 font-calligraphy text-5xl select-none">❧</div>
-              <div className="absolute top-4 right-6 text-gold-primary/10 font-calligraphy text-5xl select-none rotate-180">❧</div>
-
-              <div className="relative z-10 max-w-sm mx-auto">
-                <p
-                  className="font-calligraphy text-4xl mb-1"
-                  style={{
-                    background: "linear-gradient(135deg, #fde68a, #fbbf24, #fff9c4, #d97706)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  Sudeepthi ❤️ Nayanadeep
-                </p>
-                <p className="font-sans text-white/25 text-xs uppercase tracking-widest mt-2 mb-5">
-                  16th August 2026 · KSC Convention, Mydukur
-                </p>
-                <div className="flex items-center justify-center gap-3 mb-5">
-                  <div className="h-px w-10 bg-gold-primary/15" />
-                  <span className="text-gold-primary/30 text-sm">✦</span>
-                  <div className="h-px w-10 bg-gold-primary/15" />
-                </div>
-                <p className="font-serif italic text-white/20 text-xs mt-2 mb-2">
-                  Made with ❤️ for a new beginning
-                </p>
-                <p className="font-sans font-bold text-white/40 text-xs tracking-widest mt-4">
-                  తప్పక విచ్చేయగలరు,<br />
-                  With best wishes,<br />
-                  Sathvika Narayana
-                </p>
+            <footer className="bg-[#0d0508] text-center py-14 px-4 relative">
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#c8a84b]/30 to-transparent" />
+              <div className="font-playfair text-xl md:text-2xl text-[#c8a84b] mb-2 font-normal">
+                Sudeepthi ♡ Nayanadeep
               </div>
-
-              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold-primary/20 to-transparent" />
+              <p className="font-cormorant italic text-[#f5edd8]/60 text-sm">
+                August 16, 2026 · Mydukur
+              </p>
+              <br />
+              <p className="font-cormorant italic text-[#f5edd8]/35 text-xs">
+                With love & joy · #SudeepthiNayan2026
+              </p>
             </footer>
           </motion.div>
         </>
