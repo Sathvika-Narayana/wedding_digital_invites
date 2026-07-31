@@ -160,12 +160,11 @@ export function WeddingGallery() {
     let errors: string[] = [];
 
     Array.from(files).forEach((file) => {
-      const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
-      const isVideo = file.type.startsWith("video/") || /\.(mp4|webm|mov|avi)$/i.test(file.name);
-      const isDoc = file.type.startsWith("application/") || file.type.startsWith("text/") || /\.(doc|docx|pdf|txt)$/i.test(file.name);
+      // We just allow the file if it passed the file picker accept criteria
       
-      if (!isImage && !isVideo && !isDoc) {
-        errors.push(`${file.name}: Only images, videos, and documents are supported.`);
+      // Limit size to 4.5MB to avoid Vercel server payload 413 errors
+      if (file.size > 4.5 * 1024 * 1024) {
+        errors.push(`${file.name}: Exceeds the 4.5MB size limit for uploads.`);
         return;
       }
 

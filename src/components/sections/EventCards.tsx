@@ -171,6 +171,10 @@ function FlipEventCard({ event }: { event: EventData }) {
 }
 
 function EventInfoBox({ event }: { event: EventData }) {
+  const dateParts = event.date.split(', ');
+  const day = dateParts[0];
+  const dateStr = dateParts.slice(1).join(', ');
+
   return (
     <div className="h-[42%] bg-[#f5edd8] px-4 py-4 flex flex-col justify-center text-center">
       <h3 className="mb-3 leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Libre Baskerville', serif", fontSize: "30px", fontWeight: 600, color: "#7A1F2B" }}>
@@ -191,7 +195,8 @@ function EventInfoBox({ event }: { event: EventData }) {
             </svg>
           </div>
           <div style={{ fontFamily: "'Cinzel', serif", fontSize: "15px", fontWeight: 500, letterSpacing: "0.8px", color: "#555" }}>
-            {event.date} <br />
+            {day} <br />
+            {dateStr} <br />
             {event.time}
           </div>
         </div>
@@ -212,8 +217,7 @@ function EventInfoBox({ event }: { event: EventData }) {
               className="hover:underline text-[#7A1F2B]"
               onClick={(e) => e.stopPropagation()} // Stop flip trigger when maps is clicked
             >
-              {event.venue.split(",")[0]} <br />
-              <span className="opacity-85">{event.venue.split(",").slice(1).join(",")}</span>
+              {event.venue}
             </a>
           </div>
         </div>
