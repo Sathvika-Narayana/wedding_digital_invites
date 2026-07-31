@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 import fs from "fs";
 import path from "path";
+import { put, list } from "@vercel/blob";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,30 +18,52 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create public/uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
     // Generate unique name
     const timestamp = Date.now();
     const ext = path.extname(file.name) || ".jpg";
     const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9]/g, "_");
     const uniqueFileName = `${baseName}_${timestamp}${ext}`;
-    const destinationPath = path.join(uploadsDir, uniqueFileName);
+    
+    let relativeUrl = "";
 
-    // Write file
-    fs.writeFileSync(destinationPath, buffer);
-
-    const relativeUrl = `/uploads/${uniqueFileName}`;
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      // Upload to Vercel Blob
+      const blob = await put(`uploads/${uniqueFileName}`, buffer, {
+        access: 'public',
+        contentType: file.type || 'application/octet-stream',
+      });
+      relativeUrl = blob.url;
+    } else {
+      // Local fallback
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      const destinationPath = path.join(uploadsDir, uniqueFileName);
+      fs.writeFileSync(destinationPath, buffer);
+      relativeUrl = `/uploads/${uniqueFileName}`;
+    }
 
     // Update gallery.json
-    const galleryDbPath = path.join(process.cwd(), "gallery.json");
     let gallery = [];
-    if (fs.existsSync(galleryDbPath)) {
-      const fileContent = fs.readFileSync(galleryDbPath, "utf-8");
-      gallery = JSON.parse(fileContent || "[]");
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      try {
+        const { blobs } = await list({ prefix: 'gallery.json' });
+        if (blobs.length > 0) {
+          const res = await fetch(blobs[0].url, { cache: 'no-store' });
+          if (res.ok) {
+            gallery = await res.json();
+          }
+        }
+      } catch (err) {
+        console.error("Failed to read gallery from blob:", err);
+      }
+    } else {
+      const galleryDbPath = path.join(process.cwd(), "gallery.json");
+      if (fs.existsSync(galleryDbPath)) {
+        const fileContent = fs.readFileSync(galleryDbPath, "utf-8");
+        gallery = JSON.parse(fileContent || "[]");
+      }
     }
 
     const isVideo = file.type.startsWith("video/") || ext.toLowerCase() === ".mp4" || ext.toLowerCase() === ".mov" || ext.toLowerCase() === ".webm";
@@ -58,7 +81,17 @@ export async function POST(req: NextRequest) {
     };
 
     gallery.push(newMedia);
-    fs.writeFileSync(galleryDbPath, JSON.stringify(gallery, null, 2), "utf-8");
+    
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      await put('gallery.json', JSON.stringify(gallery), { 
+        access: 'public', 
+        addRandomSuffix: false,
+        contentType: 'application/json' 
+      });
+    } else {
+      const galleryDbPath = path.join(process.cwd(), "gallery.json");
+      fs.writeFileSync(galleryDbPath, JSON.stringify(gallery, null, 2), "utf-8");
+    }
 
     return NextResponse.json({ success: true, media: newMedia });
   } catch (error) {
