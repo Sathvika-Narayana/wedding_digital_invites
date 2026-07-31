@@ -32,7 +32,7 @@ const events: Event[] = [
     bg: "rgba(219,234,254,0.6)",
   },
   {
-    title: "Sangeeth",
+    title: "Welcome Party",
     date: "15th August 2026",
     time: "3:00 PM",
     icon: Music,
@@ -48,9 +48,9 @@ const events: Event[] = [
     bg: "rgba(209,250,229,0.6)",
   },
   {
-    title: "Wedding Ceremony",
+    title: "Muhurtham",
     date: "16th August 2026",
-    time: "11:00 AM (Muhurtham)",
+    time: "11:00 AM",
     icon: Calendar,
     accent: "#d6336c",
     bg: "rgba(252,231,243,0.6)",
@@ -115,8 +115,8 @@ export function EventsTimeline() {
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
-                        <h3 className="font-serif text-xl font-bold text-deep-maroon mb-2">{event.title}</h3>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 font-sans text-sm text-gray-600">
+                        <h3 className="mb-2" style={{ fontFamily: "'Cormorant Garamond', 'Libre Baskerville', serif", fontSize: "30px", fontWeight: 600, color: "#7A1F2B" }}>{event.title}</h3>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1" style={{ fontFamily: "'Cinzel', serif", fontSize: "15px", fontWeight: 500, letterSpacing: "0.8px", color: "#555" }}>
                           <span className="flex items-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5" style={{ color: event.accent }} />
                             {event.date}

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 export function CountdownTimer() {
-  const targetDate = new Date("2026-08-16T11:00:00").getTime();
+  const targetDate = new Date("2026-08-16T11:58:00").getTime();
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -121,7 +121,7 @@ export function CountdownTimer() {
           viewport={{ once: true }}
           className="mt-10 font-serif text-white/40 italic text-sm"
         >
-          16th August 2026 · 11:00 AM Muhurtham · KSC Convention, Mydukur
+          16th August 2026 · 11:58 AM Muhurtham · KSC Convention, Mydukur
         </motion.p>
       </div>
     </section>

@@ -16,28 +16,28 @@ interface EventData {
 
 const events: EventData[] = [
   {
-    id: "pelli-kuthuru",
-    title: "Pelli Kuthuru",
-    date: "Friday, Aug 14, 2026",
-    time: "10:00 AM",
-    venue: "Bride's Residence, Mydukur",
-    mapLink: "https://maps.app.goo.gl/8J1RKM4A9bJWD25K8",
-    image: "/images/event_pellikuthuru_anime.jpeg",
-  },
-  {
     id: "haldi",
     title: "Haldi Ceremony",
     date: "Friday, Aug 14, 2026",
     time: "06:00 AM",
-    venue: "Bride's Residence, Mydukur",
+    venue: "Khajipet, Kadapa",
     mapLink: "https://maps.app.goo.gl/8J1RKM4A9bJWD25K8",
     image: "/images/event_haldi_anime.jpeg",
+  },
+  {
+    id: "pelli-kuthuru",
+    title: "Pelli Kuthuru",
+    date: "Friday, Aug 14, 2026",
+    time: "10:00 AM",
+    venue: "Khajipet, Kadapa",
+    mapLink: "https://maps.app.goo.gl/8J1RKM4A9bJWD25K8",
+    image: "/images/event_pellikuthuru_anime.jpeg",
   },
   {
     id: "welcome",
     title: "Welcome Party",
     date: "Saturday, Aug 15, 2026",
-    time: "03:00 PM",
+    time: "11:00 AM",
     venue: "KSC Convention, Mydukur",
     mapLink: "https://maps.app.goo.gl/8J1RKM4A9bJWD25K8",
     image: "/images/event_welcome_anime.jpeg",
@@ -53,9 +53,9 @@ const events: EventData[] = [
   },
   {
     id: "muhurtham",
-    title: "Wedding Muhurtham",
+    title: "Muhurtham",
     date: "Sunday, Aug 16, 2026",
-    time: "11:00 AM",
+    time: "11:58 AM",
     venue: "KSC Convention, Mydukur",
     mapLink: "https://maps.app.goo.gl/8J1RKM4A9bJWD25K8",
     image: "/images/event_muhurtham_anime.jpeg",
@@ -134,7 +134,7 @@ function FlipEventCard({ event }: { event: EventData }) {
               src={event.image}
               alt={event.title}
               fill
-              className="object-cover"
+              className={`object-cover ${event.id !== 'welcome' ? 'object-top' : 'object-center'}`}
               sizes="320px"
             />
           </div>
@@ -158,7 +158,7 @@ function FlipEventCard({ event }: { event: EventData }) {
               src={event.image}
               alt={event.title}
               fill
-              className="object-cover"
+              className={`object-cover ${event.id !== 'welcome' ? 'object-top' : 'object-center'}`}
               sizes="320px"
             />
           </div>
@@ -173,7 +173,7 @@ function FlipEventCard({ event }: { event: EventData }) {
 function EventInfoBox({ event }: { event: EventData }) {
   return (
     <div className="h-[42%] bg-[#f5edd8] px-4 py-4 flex flex-col justify-center text-center">
-      <h3 className="font-playfair text-lg text-[#7a0e22] font-bold mb-3 leading-tight">
+      <h3 className="mb-3 leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Libre Baskerville', serif", fontSize: "30px", fontWeight: 600, color: "#7A1F2B" }}>
         {event.title}
       </h3>
       
@@ -190,7 +190,7 @@ function EventInfoBox({ event }: { event: EventData }) {
               <path d="M12 7v5l3 2" />
             </svg>
           </div>
-          <div className="font-cormorant text-[10px] md:text-[11px] text-[#555] leading-normal font-semibold">
+          <div style={{ fontFamily: "'Cinzel', serif", fontSize: "15px", fontWeight: 500, letterSpacing: "0.8px", color: "#555" }}>
             {event.date} <br />
             {event.time}
           </div>
@@ -204,12 +204,12 @@ function EventInfoBox({ event }: { event: EventData }) {
               <circle cx="12" cy="10" r="3" />
             </svg>
           </div>
-          <div className="font-cormorant text-[10px] md:text-[11px] text-[#555] leading-normal font-semibold break-words">
+          <div style={{ fontFamily: "'Cinzel', serif", fontSize: "15px", fontWeight: 500, letterSpacing: "0.8px", color: "#555" }} className="break-words">
             <a 
               href={event.mapLink} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:underline text-[#7a0e22]"
+              className="hover:underline text-[#7A1F2B]"
               onClick={(e) => e.stopPropagation()} // Stop flip trigger when maps is clicked
             >
               {event.venue.split(",")[0]} <br />

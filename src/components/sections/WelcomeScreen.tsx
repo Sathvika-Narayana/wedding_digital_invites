@@ -90,7 +90,7 @@ export function WelcomeScreen() {
               <div className="font-playfair text-[9px] md:text-[10px] text-[#e8d49a] uppercase tracking-wider leading-relaxed">
                 Sunday <br />
                 August 16, 2026 <br />
-                11:00 AM
+                11:58 AM
               </div>
             </div>
 

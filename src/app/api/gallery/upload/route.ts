@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     }
 
     const isVideo = file.type.startsWith("video/") || ext.toLowerCase() === ".mp4" || ext.toLowerCase() === ".mov" || ext.toLowerCase() === ".webm";
+    const isDoc = file.type.startsWith("application/") || file.type.startsWith("text/") || ext.toLowerCase() === ".doc" || ext.toLowerCase() === ".docx" || ext.toLowerCase() === ".pdf" || ext.toLowerCase() === ".txt";
 
     const newMedia = {
       id: timestamp.toString(),
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
       status: "pending", // All uploads start in moderation queue
       uploader,
       timestamp: new Date().toISOString(),
-      type: isVideo ? "video" : "image"
+      type: isVideo ? "video" : isDoc ? "document" : "image"
     };
 
     gallery.push(newMedia);

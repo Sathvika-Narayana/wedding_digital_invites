@@ -160,11 +160,12 @@ export function WeddingGallery() {
     let errors: string[] = [];
 
     Array.from(files).forEach((file) => {
-      const isImage = file.type.startsWith("image/");
-      const isVideo = file.type.startsWith("video/");
+      const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+      const isVideo = file.type.startsWith("video/") || /\.(mp4|webm|mov|avi)$/i.test(file.name);
+      const isDoc = file.type.startsWith("application/") || file.type.startsWith("text/") || /\.(doc|docx|pdf|txt)$/i.test(file.name);
       
-      if (!isImage && !isVideo) {
-        errors.push(`${file.name}: Only images and videos are supported.`);
+      if (!isImage && !isVideo && !isDoc) {
+        errors.push(`${file.name}: Only images, videos, and documents are supported.`);
         return;
       }
 
@@ -448,7 +449,6 @@ export function WeddingGallery() {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*,video/*"
                     multiple
                     onChange={handleFileChange}
                     className="hidden"
@@ -621,6 +621,11 @@ export function WeddingGallery() {
                             <Film className="w-4 h-4" />
                           </div>
                         </div>
+                      ) : item.type === "document" ? (
+                        <div className="relative aspect-[3/4] bg-black/60 flex flex-col items-center justify-center p-4">
+                          <Download className="w-8 h-8 text-gold-light mb-2" />
+                          <p className="text-white text-xs text-center break-all">{item.url.split('/').pop()}</p>
+                        </div>
                       ) : (
                         <Image
                           src={item.url}
@@ -742,6 +747,12 @@ export function WeddingGallery() {
                     autoPlay
                     playsInline
                   />
+                ) : gallery[lightboxIndex]?.type === "document" ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black/50 rounded-xl p-8">
+                    <Download className="w-16 h-16 text-gold-light mb-4" />
+                    <p className="text-white text-lg text-center mb-4">{gallery[lightboxIndex]?.url.split('/').pop()}</p>
+                    <a href={gallery[lightboxIndex]?.url} download className="px-6 py-2 bg-gold-primary text-deep-maroon rounded-full font-bold">Download Document</a>
+                  </div>
                 ) : (
                   <Image
                     src={gallery[lightboxIndex]?.url}
