@@ -26,44 +26,21 @@ export async function POST(req: NextRequest) {
     
     let relativeUrl = "";
 
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-      // Upload to Vercel Blob
-      const blob = await put(`uploads/${uniqueFileName}`, buffer, {
-        access: 'public',
-        contentType: file.type || 'application/octet-stream',
-      });
-      relativeUrl = blob.url;
-    } else {
-      // Local fallback
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-      const destinationPath = path.join(uploadsDir, uniqueFileName);
-      fs.writeFileSync(destinationPath, buffer);
-      relativeUrl = `/uploads/${uniqueFileName}`;
+    // Local fallback
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
     }
+    const destinationPath = path.join(uploadsDir, uniqueFileName);
+    fs.writeFileSync(destinationPath, buffer);
+    let relativeUrl = `/uploads/${uniqueFileName}`;
 
     // Update gallery.json
     let gallery = [];
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-      try {
-        const { blobs } = await list({ prefix: 'gallery.json' });
-        if (blobs.length > 0) {
-          const res = await fetch(blobs[0].url, { cache: 'no-store' });
-          if (res.ok) {
-            gallery = await res.json();
-          }
-        }
-      } catch (err) {
-        console.error("Failed to read gallery from blob:", err);
-      }
-    } else {
-      const galleryDbPath = path.join(process.cwd(), "gallery.json");
-      if (fs.existsSync(galleryDbPath)) {
-        const fileContent = fs.readFileSync(galleryDbPath, "utf-8");
-        gallery = JSON.parse(fileContent || "[]");
-      }
+    const galleryDbPath = path.join(process.cwd(), "gallery.json");
+    if (fs.existsSync(galleryDbPath)) {
+      const fileContent = fs.readFileSync(galleryDbPath, "utf-8");
+      gallery = JSON.parse(fileContent || "[]");
     }
 
     const isVideo = file.type.startsWith("video/") || ext.toLowerCase() === ".mp4" || ext.toLowerCase() === ".mov" || ext.toLowerCase() === ".webm";
@@ -82,16 +59,8 @@ export async function POST(req: NextRequest) {
 
     gallery.push(newMedia);
     
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-      await put('gallery.json', JSON.stringify(gallery), { 
-        access: 'public', 
-        addRandomSuffix: false,
-        contentType: 'application/json' 
-      });
-    } else {
-      const galleryDbPath = path.join(process.cwd(), "gallery.json");
-      fs.writeFileSync(galleryDbPath, JSON.stringify(gallery, null, 2), "utf-8");
-    }
+    const galleryDbPath = path.join(process.cwd(), "gallery.json");
+    fs.writeFileSync(galleryDbPath, JSON.stringify(gallery, null, 2), "utf-8");
 
     return NextResponse.json({ success: true, media: newMedia });
   } catch (error: any) {

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { upload } from "@vercel/blob/client";
 
 interface MediaItem {
   id: string;
@@ -162,11 +163,7 @@ export function WeddingGallery() {
     Array.from(files).forEach((file) => {
       // We just allow the file if it passed the file picker accept criteria
       
-      // Limit size to 4.5MB to avoid Vercel server payload 413 errors
-      if (file.size > 4.5 * 1024 * 1024) {
-        errors.push(`${file.name}: Exceeds the 4.5MB size limit for uploads.`);
-        return;
-      }
+      // Removed 4.5MB limit since we are using client direct uploads now
 
       // Size limit: 30MB
       if (file.size > 30 * 1024 * 1024) {
@@ -205,41 +202,79 @@ export function WeddingGallery() {
       setUploadingStatus({ current: i + 1, total: totalFiles, progress: 0 });
 
       try {
-        await new Promise<void>((resolve, reject) => {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("uploader", uploaderName);
-          formData.append("category", selectedAlbum);
+        if (process.env.NODE_ENV === 'development') {
+          // LOCAL FALLBACK using standard XMLHttpRequest
+          await new Promise<void>((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("uploader", uploaderName);
+            formData.append("category", selectedAlbum);
 
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", "/api/gallery/upload", true);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/gallery/upload", true);
 
-          xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-              const percent = Math.round((event.loaded / event.total) * 100);
-              setUploadingStatus({ current: i + 1, total: totalFiles, progress: percent });
+            xhr.upload.onprogress = (event) => {
+              if (event.lengthComputable) {
+                const percent = Math.round((event.loaded / event.total) * 100);
+                setUploadingStatus({ current: i + 1, total: totalFiles, progress: percent });
+              }
+            };
+
+            xhr.onload = () => {
+              if (xhr.status === 200) {
+                resolve();
+              } else {
+                let errMsg = `Failed to upload ${file.name}`;
+                try {
+                  const res = JSON.parse(xhr.responseText);
+                  if (res.error) errMsg = res.error;
+                } catch (e) {}
+                reject(new Error(errMsg));
+              }
+            };
+
+            xhr.onerror = () => {
+              reject(new Error(`Network error during upload of ${file.name}`));
+            };
+
+            xhr.send(formData);
+          });
+        } else {
+          // Step 1: Upload file directly to Vercel Blob from the client
+          const ext = file.name.split('.').pop();
+          const baseName = file.name.replace(`.${ext}`, '').replace(/[^a-zA-Z0-9]/g, "_");
+          const uniqueFileName = `${baseName}_${Date.now()}.${ext}`;
+          
+          const newBlob = await upload(`uploads/${uniqueFileName}`, file, {
+            access: 'public',
+            handleUploadUrl: '/api/upload',
+            onUploadProgress: (progressEvent) => {
+               setUploadingStatus({ current: i + 1, total: totalFiles, progress: progressEvent.percentage });
             }
-          };
+          });
 
-          xhr.onload = () => {
-            if (xhr.status === 200) {
-              resolve();
-            } else {
-              let errMsg = `Failed to upload ${file.name}`;
-              try {
-                const res = JSON.parse(xhr.responseText);
-                if (res.error) errMsg = res.error;
-              } catch (e) {}
-              reject(new Error(errMsg));
-            }
-          };
+          // Step 2: Send metadata to our server
+          const isVideo = file.type.startsWith("video/") || ext?.toLowerCase() === "mp4" || ext?.toLowerCase() === "mov" || ext?.toLowerCase() === "webm";
+          const isDoc = file.type.startsWith("application/") || file.type.startsWith("text/") || ext?.toLowerCase() === "doc" || ext?.toLowerCase() === "docx" || ext?.toLowerCase() === "pdf" || ext?.toLowerCase() === "txt";
+          
+          const res = await fetch("/api/gallery/entry", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: newBlob.url,
+              uploader: uploaderName,
+              category: selectedAlbum,
+              type: isVideo ? "video" : isDoc ? "document" : "image"
+            }),
+          });
 
-          xhr.onerror = () => {
-            reject(new Error(`Network error during upload of ${file.name}`));
-          };
-
-          xhr.send(formData);
-        });
+          if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.error || `Failed to save metadata for ${file.name}`);
+          }
+        }
       } catch (err: any) {
         setUploadError(err.message || "Failed to upload files. Please try again.");
         setUploadingStatus(null);

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const secret = searchParams.get("secret") || req.headers.get("x-admin-secret");
 
     let gallery = [];
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    if (process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV !== 'development') {
       try {
         const { blobs } = await list({ prefix: 'gallery.json' });
         if (blobs.length > 0) {
