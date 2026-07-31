@@ -225,7 +225,12 @@ export function WeddingGallery() {
             if (xhr.status === 200) {
               resolve();
             } else {
-              reject(new Error(`Failed to upload ${file.name}`));
+              let errMsg = `Failed to upload ${file.name}`;
+              try {
+                const res = JSON.parse(xhr.responseText);
+                if (res.error) errMsg = res.error;
+              } catch (e) {}
+              reject(new Error(errMsg));
             }
           };
 
