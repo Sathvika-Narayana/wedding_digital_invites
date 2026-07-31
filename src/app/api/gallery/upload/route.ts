@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
     const destinationPath = path.join(uploadsDir, uniqueFileName);
     fs.writeFileSync(destinationPath, buffer);
-    let relativeUrl = `/uploads/${uniqueFileName}`;
+    relativeUrl = `/uploads/${uniqueFileName}`;
 
     // Update gallery.json
     let gallery = [];
@@ -59,7 +59,6 @@ export async function POST(req: NextRequest) {
 
     gallery.push(newMedia);
     
-    const galleryDbPath = path.join(process.cwd(), "gallery.json");
     fs.writeFileSync(galleryDbPath, JSON.stringify(gallery, null, 2), "utf-8");
 
     return NextResponse.json({ success: true, media: newMedia });
