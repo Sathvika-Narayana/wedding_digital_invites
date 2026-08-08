@@ -10,8 +10,6 @@ import { CountdownTimer } from "@/components/sections/CountdownTimer";
 import { EventCards } from "@/components/sections/EventCards";
 import { VenueSection } from "@/components/sections/VenueSection";
 
-
-import Link from "next/link";
 import { RSVPForm } from "@/components/sections/RSVPForm";
 import { FloatingJasmine } from "@/components/effects/FloatingJasmine";
 import { GoldenSparkles } from "@/components/effects/GoldenSparkles";
@@ -81,19 +79,6 @@ export default function Home() {
             <div className="strip" />
 
 
-
-            {/* 9. Media upload & filters - Wedding Gallery link */}
-            <section className="py-24 px-4 text-center relative" style={{ background: "linear-gradient(160deg, #1c0008 0%, #120005 50%, #1c0008 100%)" }}>
-               <div className="max-w-2xl mx-auto">
-                 <h2 className="font-calligraphy text-4xl md:text-5xl text-gold-light mb-6">Capture the Magic</h2>
-                 <p className="font-serif text-white/70 mb-10">We would love to see our special day through your eyes. View the moments captured by our loved ones and add your own.</p>
-                 <Link href="/gallery" className="inline-flex items-center justify-center px-8 py-3 rounded-full font-sans font-bold uppercase tracking-widest transition-all bg-gradient-to-r from-yellow-500 to-amber-600 text-white shadow-lg hover:scale-105">
-                   View & Add Memories
-                 </Link>
-               </div>
-            </section>
-
-            <div className="strip" />
 
             {/* 10. RSVP & blessings */}
             <RSVPForm />
